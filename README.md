@@ -40,6 +40,7 @@ It also serves as a knowledge hub for collaboration between Backend and Frontend
 * Good component Structure to ensure easy location.
 * Use of API's and GraphQL to avoid hardcoding data and also saving data externally out of code
 * Use of PWA which has the ability to work offline, have smooth animations, fast transitions and many more
+* Use of Figma to create a nice Design layouts Guide 
 
 # Timeline
 * Start Date: Sept 8, 2025
