@@ -1,3 +1,3 @@
-##ALX Project Nexus - ProDev Frontend Engineering Documentation
+#ALX Project Nexus - ProDev Frontend Engineering Documentation
 
-##Introduction
+#Introduction
