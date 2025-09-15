@@ -12,3 +12,33 @@ It also serves as a knowledge hub for collaboration between Backend and Frontend
 * Foster collaboration with backend learners using APIs
 
 # Key Technologies Covered
+* Next.js-
+* React-
+* ReactNative-
+* GraphQL-
+* Rest API-
+* PWA-
+* TailwindCss-
+* Nativewind-
+* Expo-
+# Frontend Engineering Concepts
+1. UI/UX Design
+2. Component Structure
+3. PWA Fundamentals
+4. Advanced Routing Techniques
+5. API intergrations and also use of GraphQL
+
+# Challenges and Solutions
+* Challenge: Integrating API's to the frontend
+   * Solution: use of Rapid API to get the needed API's
+* Challenge: Creation of Many Components
+   * Solution: use of [id.tsx] to reduce number of components created
+     
+# Best Practices and Takeaways
+* Use of Tailwind Css to avoid having CSS on seperate files.
+* Use of Error Boundary to catch errors in specific fields.
+* Good component Structure to ensure easy location.
+* Use of API's and GraphQL to avoid hardcoding data and also saving data externally out of code
+* Use of PWA which has the ability to work offline, have smooth animations, fast transitions and many more
+
+# Timeline
