@@ -42,3 +42,6 @@ It also serves as a knowledge hub for collaboration between Backend and Frontend
 * Use of PWA which has the ability to work offline, have smooth animations, fast transitions and many more
 
 # Timeline
+* Start Date: Sept 8, 2025
+* Deadline: Sept 15, 2025
+* Review Dates: Sept 29 – Oct 1, 2025
