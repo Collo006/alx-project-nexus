@@ -1,4 +1,4 @@
-import { FlatList,  View, Image, ActivityIndicator, Text, Button, TouchableOpacity, ScrollView } from "react-native";
+import { FlatList,  View, Image, ActivityIndicator, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import axios from 'axios';
 import { useFonts } from "expo-font"
@@ -6,7 +6,6 @@ import { Ionicons } from "@expo/vector-icons"
 import React, { useEffect, useRef, useState } from "react";
 import { Sora_400Regular, Sora_600SemiBold, Sora_700Bold} from "@expo-google-fonts/sora";
 import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from "@expo-google-fonts/poppins";
-import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../components/color-theme"
 
 
@@ -43,7 +42,7 @@ const now_playing = {
 //Rated Tv Episodes
 const rated = {
   method: 'GET',
-  url: 'https://api.themoviedb.org/3/guest_session/guest_session_id/rated/tv/episodes?language=en-US&page=1&sort_by=created_at.asc',
+  url: 'https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1',
   headers: {
     accept: 'application/json',
     Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OGI4Y2Y5M2JhODBjZGIzYjBkZDIyZjhhZTI4ZDZjNiIsIm5iZiI6MTc1ODA0ODMxOS41NjA5OTk5LCJzdWIiOiI2OGM5YjAzZjAxMDU1NjhlNmI3OGMyNGUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.aN82hedmtHMdd_1mAKxIAxD8s9Xg8claNVHAxQX0PVU'
@@ -57,12 +56,30 @@ const[info,setInfo]=useState<any>([]); // fetch info from API
 const[pop,setPopular]=useState<any>([]);// fetch popular API
 const[latest,setLatest]=useState<any>([]);// fetch latest movies
 const[rate,setRated]=useState<any>([]);// fetch rated movies
+const[pendingRequests,setPendingRequests]=useState(0)// counter state
 const[loading,setIsLoading]=useState(true); //loading state
 const[error,setError]=useState<string | null>(null); //error state
+const[errorPopular,setErrorPopular]=useState<string|null>(null);//popular error state
+const[errorNowPlaying,setErrorNowPlaying]=useState<string|null>(null)//now playing
+const[errorRated,setErrorRated]=useState<string|null>(null)// rated
+
+//set counter function
+async function fetchWithCounter(fetchFn:()=>Promise<void>){
+  setPendingRequests((prev)=> prev +1);
+  try{
+    await fetchFn();
+  }finally{
+    setPendingRequests((prev)=>{
+      const newCount = prev - 1;
+      if(newCount===0)setIsLoading(false);
+      return newCount
+    });
+  }
+} //If you’re using fetchWithCounter, you shouldn’t call setIsLoading(false) inside each request.Instead, you let fetchWithCounter manage it:
 
 //trending api
 useEffect(()=>{
- async function fetchData () {
+fetchWithCounter(async()=>{
   try{
    
     const response= await axios.request(options);
@@ -75,64 +92,64 @@ useEffect(()=>{
     console.log(error);
     setError("Something just Crushed!! see you in a jiffy!")
   }
-};
-  fetchData();
+
+})
+
+
 },[])
 
 //POPULAR API
 useEffect(()=>{
- async function fetchData () {
-  try{
+fetchWithCounter(async () => {
+   try{
    
     const response= await axios.request(popular);
     const data= response.data.results;
     console.log(data);
     setPopular(data);
-    setIsLoading(false);
-  }catch(error:any){
-    setIsLoading(false);
-    console.log(error);
-    setError("Something just Crushed!! see you in a jiffy!")
+  
+  }catch(errorPopular:any){
+ 
+    console.log(errorPopular);
+    setErrorPopular("Something just Crushed!! see you in a jiffy!")
   }
-};
-  fetchData();
+})
 },[])
 
 //Now playing
 useEffect(()=>{
- async function fetchData () {
+fetchWithCounter(async () =>{
   try{
    
     const response= await axios.request(now_playing);
     const data= response.data.results;
     console.log(data);
     setLatest(data);
-    setIsLoading(false);
-  }catch(error:any){
-    setIsLoading(false);
-    console.log(error);
-    setError("Something just Crushed!! see you in a jiffy!")
+ 
+  }catch(errorNowPlaying:any){
+   
+    console.log(errorNowPlaying);
+    setErrorNowPlaying("Something just Crushed!! see you in a jiffy!")
   }
-};
-  fetchData();
+})
 },[])
 
 //Rated Movies
 useEffect(()=>{
-  async function fetchData () {
-    try{
+  fetchWithCounter( async () => {
+        try{
       const response= await axios.request(rated);
       const data=response.data.results;
       console.log(data);
       setRated(data);
-      setIsLoading(false);
-    }catch(error:any){
-      setIsLoading(false);
-      console.log(error);
-      setError("Something just Crushed!! See you in a jiffy")
+
+    }catch(errorRated:any){
+     
+      console.log(errorRated);
+      setErrorRated("Something just Crushed!! See you in a jiffy")
     }
-  };
-  fetchData();
+
+  })
 },[])
 
 
@@ -258,8 +275,8 @@ if(!fontsLoaded){
               {
                 loading?(
                   <ActivityIndicator color="red" size="large" />
-                ): error?(
-                  <Text style={{color: colors.error}}>{error}</Text>
+                ): errorPopular?(
+                  <Text style={{color: colors.error}}>{errorPopular}</Text>
                 ):
             
               <FlatList data={pop} keyExtractor={(item)=>item.id} renderItem={({item})=>(
@@ -290,8 +307,8 @@ if(!fontsLoaded){
               {
                 loading?(
                   <ActivityIndicator color="red" size="large" />
-                ): error?(
-                  <Text style={{color: colors.error}}>{error}</Text>
+                ): errorNowPlaying?(
+                  <Text style={{color: colors.error}}>{errorNowPlaying}</Text>
                 ):
             
               <FlatList data={latest} keyExtractor={(item)=>item.id} renderItem={({item})=>(
@@ -322,8 +339,8 @@ if(!fontsLoaded){
               {
                 loading?(
                   <ActivityIndicator color="red" size="large" />
-                ): error?(
-                  <Text style={{color: colors.error}}>{error}</Text>
+                ): errorRated?(
+                  <Text style={{color: colors.error}}>{errorRated}</Text>
                 ):
             
               <FlatList data={rate} keyExtractor={(item)=>item.id} renderItem={({item})=>(
