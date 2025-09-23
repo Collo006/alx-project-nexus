@@ -168,7 +168,8 @@ useEffect(()=>{
   //fonts
   const [fontsLoaded]= useFonts({Sora_400Regular, Sora_700Bold,Sora_600SemiBold, Poppins_400Regular, Poppins_700Bold, Poppins_600SemiBold});
 if(!fontsLoaded){
-return null; }
+  return null; 
+}
 
 
 
