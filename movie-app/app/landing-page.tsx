@@ -1,4 +1,4 @@
-import { FlatList,  View, Image, ActivityIndicator, Text, TouchableOpacity, ScrollView } from "react-native";
+import { FlatList,  View, Image, ActivityIndicator, Text, TouchableOpacity, ScrollView, TextInput } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import axios from 'axios';
 import { useFonts } from "expo-font"
@@ -6,7 +6,20 @@ import { Ionicons } from "@expo/vector-icons"
 import React, { useEffect, useRef, useState } from "react";
 import { Sora_400Regular, Sora_600SemiBold, Sora_700Bold} from "@expo-google-fonts/sora";
 import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from "@expo-google-fonts/poppins";
-import { useTheme } from "../components/color-theme"
+import { useTheme } from "../components/color-theme";
+import { Link } from "expo-router";
+
+
+//Multi-serach
+const multi_search = {
+  method: 'GET',
+  url: 'https://api.themoviedb.org/3/search/multi?include_adult=false&language=en-US&page=1',
+  headers: {
+    accept: 'application/json',
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OGI4Y2Y5M2JhODBjZGIzYjBkZDIyZjhhZTI4ZDZjNiIsIm5iZiI6MTc1ODA0ODMxOS41NjA5OTk5LCJzdWIiOiI2OGM5YjAzZjAxMDU1NjhlNmI3OGMyNGUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.aN82hedmtHMdd_1mAKxIAxD8s9Xg8claNVHAxQX0PVU'
+  }
+};
+
 
 
 //Trending Movies
@@ -52,7 +65,7 @@ const rated = {
 export default function LandingPage() {
 
 //API setup
-const[info,setInfo]=useState<any>([]); // fetch info from API
+const[info,setInfo]=useState<any>([]); //fetch info from API
 const[pop,setPopular]=useState<any>([]);// fetch popular API
 const[latest,setLatest]=useState<any>([]);// fetch latest movies
 const[rate,setRated]=useState<any>([]);// fetch rated movies
@@ -62,6 +75,15 @@ const[error,setError]=useState<string | null>(null); //error state
 const[errorPopular,setErrorPopular]=useState<string|null>(null);//popular error state
 const[errorNowPlaying,setErrorNowPlaying]=useState<string|null>(null)//now playing
 const[errorRated,setErrorRated]=useState<string|null>(null)// rated
+const[errormultisearch,setErrorMultiSearch]=useState<string|null>(null)// rated
+
+const combinedData = [...pop,...latest,...rate];
+
+//Search Bar
+const[search,setSearch]=useState("")//search query
+const[multisearch,setMultiSearch]=useState<any>([])// fetch from multi_search
+const[filterData,setFilteredData]=useState<any>([])// filter data across all field
+
 
 //set counter function
 async function fetchWithCounter(fetchFn:()=>Promise<void>){
@@ -76,6 +98,28 @@ async function fetchWithCounter(fetchFn:()=>Promise<void>){
     });
   }
 } //If you’re using fetchWithCounter, you shouldn’t call setIsLoading(false) inside each request.Instead, you let fetchWithCounter manage it:
+
+
+//Multi search
+useEffect(()=>{
+fetchWithCounter(async()=>{
+  try{
+   
+    const response= await axios.request(multi_search);
+    const data= response.data.results;
+    console.log(data);
+    setMultiSearch(data);
+   
+  }catch(errormultisearch:any){
+    
+    console.log(errormultisearch);
+    setErrorMultiSearch("Something just Crushed!! see you in a jiffy!")
+  }
+
+})
+
+},[])
+
 
 //trending api
 useEffect(()=>{
@@ -94,7 +138,6 @@ fetchWithCounter(async()=>{
   }
 
 })
-
 
 },[])
 
@@ -189,7 +232,16 @@ if(!fontsLoaded){
 }
 
 
-
+//Function to Handle Search Bar
+const handleSearch=(text:string)=>{
+  setSearch(text) //updates the search state with the current value
+  if(text===""){
+    setFilteredData(combinedData);
+  }else{
+    const result =combinedData.filter((item:any)=>  (item.name || item.title || "").toLowerCase().includes(text.toLowerCase()));
+      setFilteredData(result)
+  }
+}
 
 
   return (
@@ -213,13 +265,20 @@ if(!fontsLoaded){
                 <Text className="pt-4 font-sora_bold text-2xl  "  style={{ color: colors.secondaryText }}>BingeMovies</Text>
                 </View>
               <View className=" pt-4 flex-row gap-6">
+              <TextInput placeholder="Search Movie" placeholderTextColor="#A2A2A2" value={search} onChangeText={handleSearch}/>
              <Ionicons name="search" size={25}  style={{ color: colors.secondaryText }} />
+             <Link href='/Profile/user_profile' push asChild>
              <Ionicons name="person" size={25}  style={{ color: colors.secondaryText }} />
+             </Link>
               </View>
             </View>
             <View className=" flex-row gap-2 ml-2 ">
+              <Link href="/categories/trending" push asChild>
               <Text className=" font-sora text-xl"  style={{ color: colors.secondaryText }} >Trending</Text>
+              </Link>
+              <Link href="/categories/popular" push asChild>
               <Text className=" font-sora text-xl " style={{ color: colors.secondaryText }} >Popular</Text>
+              </Link>
               <TouchableOpacity onPress={toggleTheme} style={{marginLeft: 218}}   >
               <Text className=" font-sora text-xl " style={{ fontWeight: "bold", color: colors.secondaryText }}>
                   {theme === "light" ? " Light" : " Dark "}
@@ -236,10 +295,12 @@ if(!fontsLoaded){
               ) : error ? (
                 <Text style={{color: colors.error}}>{error}</Text>
               ): 
-                        <FlatList style={{ backgroundColor:colors.backGround, height:500, width:400}} data={info} keyExtractor={(item)=> item.id}
-                        ref={flatListRef}
-                        renderItem={({item})=>(
+                <FlatList style={{ backgroundColor:colors.backGround, height:500, width:400}} data={info} keyExtractor={(item)=> item.id}
+                  ref={flatListRef}
+                  renderItem={({item})=>(
             <View className="mt-10" style={{position:"relative", width:400, height:300}}>
+              <Link href={{pathname: "/details/[id]",params:{id:item.id,type:item.media_type}}} asChild>
+              <TouchableOpacity>
                  {item.poster_path && (
                 <Image className=" gap-20 "
                   source={{
@@ -251,6 +312,9 @@ if(!fontsLoaded){
                 />
                 
               )}
+
+              </TouchableOpacity>
+              </Link>
               <View className=" self-center">
                    <Text className="font-sora_semi_bold text-2xl  " style={{color: colors.secondaryText}}>{item.name}</Text>
                    <Text className="font-sora text-xl " style={{color:colors.secondaryText}}>{item.media_type}</Text> 
@@ -265,12 +329,16 @@ if(!fontsLoaded){
             }
             <View className=" mt-2 ml-2 flex-row justify-between">
               <Ionicons name="information-circle" size={20} style={{ color: colors.secondaryText }}/>
-              <TouchableOpacity className="rounded-lg " style={{width:150,height:50,}}><Text className="text-center pt-4 font-sora_semi_bold rounded-lg " style={{backgroundColor:colors.secondaryText, color:colors.primaryText,height:50}}>WATCH NOW</Text></TouchableOpacity>
+              <TouchableOpacity className="rounded-lg " style={{width:150,height:50,}}>
+                <Text className="text-center pt-4 font-sora_semi_bold rounded-lg " style={{backgroundColor:colors.secondaryText, color:colors.primaryText,height:50}}>WATCH NOW</Text>
+                </TouchableOpacity>
              <Ionicons name="bookmark" size={20} style={{color: colors.secondaryText}}/>
             </View>
                 {/** POPULAR MOVIES/TV SHOWS */}
              <View className=" mt-2 ml-2" style= {{height: 250}}>
+              <Link href='/categories/popular' push asChild>
                <Text className=" font-sora text-xl " style={{ color: colors.secondaryText }} >Popular</Text>
+              </Link>
 
               {
                 loading?(
@@ -279,9 +347,11 @@ if(!fontsLoaded){
                   <Text style={{color: colors.error}}>{errorPopular}</Text>
                 ):
             
-              <FlatList data={pop} keyExtractor={(item)=>item.id} renderItem={({item})=>(
+              <FlatList data={search.length >0 ? filterData: pop} keyExtractor={(item)=>item.id} renderItem={({item})=>(
                 <View >
-                  {item.poster_path && (
+                  <Link href={{pathname: "/details/[id]",params:{id:item.id,type:item.media_type || "tv"}}} asChild>
+                  <TouchableOpacity>
+                             {item.poster_path && (
                 <Image className=" gap-1 "
                   source={{
                     uri: `https://image.tmdb.org/t/p/w200${item.poster_path}`,
@@ -292,7 +362,9 @@ if(!fontsLoaded){
                 />
                 
               )}
-              <Text className="font-sora text-sm " style={{color: colors.secondaryText}}>{item.name}</Text>
+                  </TouchableOpacity>
+                  </Link>
+                   <Text className="font-sora text-sm " style={{color: colors.secondaryText}}>{item.name || item.title}</Text>
 
                 </View>
               )} 
@@ -303,7 +375,9 @@ if(!fontsLoaded){
             </View>
             {/**LATEST MOVIES */}
              <View className=" mt-2 ml-2" style= {{height: 250}}>
+              <Link href='/categories/movies' push asChild>
               <Text className=" font-sora text-xl " style={{ color: colors.secondaryText }} >Latest Movies</Text>
+              </Link>
               {
                 loading?(
                   <ActivityIndicator color="red" size="large" />
@@ -311,8 +385,11 @@ if(!fontsLoaded){
                   <Text style={{color: colors.error}}>{errorNowPlaying}</Text>
                 ):
             
-              <FlatList data={latest} keyExtractor={(item)=>item.id} renderItem={({item})=>(
+              <FlatList data={search.length >0 ? filterData: latest} keyExtractor={(item)=>item.id} renderItem={({item})=>(
                 <View >
+
+                  <Link href={{pathname: "/details/[id]",params:{id:item.id,type:item.media_type || "movie"}}} asChild>
+                  <TouchableOpacity>
                   {item.poster_path && (
                 <Image className=" gap-1 "
                   source={{
@@ -324,6 +401,9 @@ if(!fontsLoaded){
                 />
                 
               )}
+
+                  </TouchableOpacity>
+                  </Link>
               <Text className="font-sora text-sm " style={{color: colors.secondaryText}}>{item.name}</Text>
 
                 </View>
@@ -335,7 +415,9 @@ if(!fontsLoaded){
             </View>
             {/** Top Rated Series */}
               <View className=" mt-2 ml-2" style= {{height: 300}}>
+              <Link href='/categories/tv_series' push asChild>
               <Text className=" font-sora text-xl " style={{ color: colors.secondaryText }} >Top Rated Series</Text>
+              </Link>
               {
                 loading?(
                   <ActivityIndicator color="red" size="large" />
@@ -343,8 +425,10 @@ if(!fontsLoaded){
                   <Text style={{color: colors.error}}>{errorRated}</Text>
                 ):
             
-              <FlatList data={rate} keyExtractor={(item)=>item.id} renderItem={({item})=>(
+              <FlatList data={search.length >0 ? filterData: rate} keyExtractor={(item)=>item.id} renderItem={({item})=>(
                 <View >
+                 <Link href={{pathname: "/details/[id]",params:{id:item.id,type:item.media_type ||  "tv"}}} asChild>
+                 <TouchableOpacity>
                   {item.poster_path && (
                 <Image className=" gap-1 "
                   source={{
@@ -356,6 +440,9 @@ if(!fontsLoaded){
                 />
                 
               )}
+                 </TouchableOpacity>
+                 </Link>
+
               <Text className="font-sora text-sm " style={{color: colors.secondaryText}}>{item.name}</Text>
 
                 </View>
@@ -369,12 +456,22 @@ if(!fontsLoaded){
           </ScrollView>
                
             {/** FOOTER */}
-          <View className="absolute bottom-0 left-0 right-0 flex-row justify-around  h-28 items-center" style={{backgroundColor:colors.backGround}}>  
+          <View className="absolute bottom-0 left-0 right-0 flex-row justify-around  h-28 items-center" style={{backgroundColor:colors.backGround}}> 
+          <Link href="/landing-page" push asChild>
           <Ionicons name="home"  size={20} className="-mt-10" style={{color: colors.secondaryText}} />
+          </Link> 
+          <Link href='/categories/movies' push asChild>
           <Ionicons name="play-circle"  size={20} className="-mt-10" style={{color: colors.secondaryText}} />
+          </Link>
+          <Link href='/categories/tv_series' push asChild>
           <Ionicons name="folder" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
+          </Link>
+          <Link href='/categories/saved' push asChild>
           <Ionicons name="bookmark" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
+          </Link>
+          <Link href='/Profile/user_profile' push asChild>
           <Ionicons name="ellipsis-horizontal" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
+          </Link>
           </View>    
         </SafeAreaView>
       </SafeAreaProvider>
