@@ -119,7 +119,7 @@ if(!fontsLoaded){
                     </View>
                     </View>
 
-                    <ScrollView>
+                 
                         <View style={{height:700}}>
                        {
                         loading?(
@@ -150,7 +150,7 @@ if(!fontsLoaded){
                         )}/>
                        }
                          </View>
-                    </ScrollView>
+           
 
                           {/** FOOTER */}
                         <View className="absolute bottom-0 left-0 right-0 flex-row justify-around  h-28 items-center" style={{backgroundColor:colors.backGround}}> 
@@ -165,9 +165,6 @@ if(!fontsLoaded){
                         </Link>
                         <Link href='/categories/saved' push asChild>
                         <Ionicons name="bookmark" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
-                        </Link>
-                        <Link href='/Profile/user_profile' push asChild>
-                        <Ionicons name="ellipsis-horizontal" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
                         </Link>
                         </View>    
               

@@ -25,7 +25,11 @@ module.exports = {
       sora_semi_bold:["Sora_600SemiBold"],
       poppins:["Poppins_400Regular"],
       poppins_bold:["Poppins_700Bold"],
-      poppins_semi_bold:["Poppins_600SemiBold"]
+      poppins_semi_bold:["Poppins_600SemiBold"],
+      shadow_into_light:["ShadowIntoLight_400Regular"],
+      dancingscript:["DancingScript_400Regular"],
+      dancingscript_semi_bold:["DancingScript_600SemiBold"],
+      dancingscript_bold:["DancingScript_700Bold"]
     },
   },
   plugins: [],

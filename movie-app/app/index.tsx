@@ -3,6 +3,12 @@ import {  View,Text, StyleSheet } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { Video,ResizeMode } from "expo-av";
 import React, {  useRef} from "react";
+import { Sora_400Regular, Sora_600SemiBold, Sora_700Bold} from "@expo-google-fonts/sora";
+import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from "@expo-google-fonts/poppins";
+import { DancingScript_400Regular, DancingScript_600SemiBold, DancingScript_700Bold } from "@expo-google-fonts/dancing-script";
+import { ShadowsIntoLight_400Regular } from "@expo-google-fonts/shadows-into-light";
+import { useFonts } from "expo-font";
+
 
 
 
@@ -11,9 +17,18 @@ import React, {  useRef} from "react";
 
 export default function Index() {
 
+  
+
     const routes=useRouter();
 
     const video = useRef<Video>(null);
+
+      //fonts
+  const [fontsLoaded]= useFonts({Sora_400Regular, Sora_700Bold,Sora_600SemiBold, Poppins_400Regular, Poppins_700Bold, Poppins_600SemiBold,ShadowsIntoLight_400Regular, DancingScript_400Regular, DancingScript_600SemiBold, DancingScript_700Bold});
+if(!fontsLoaded){
+  return null; 
+}
+
 
 
   return (
@@ -30,7 +45,7 @@ export default function Index() {
           isMuted
           />
           <View className="self-center mt-40">
-      <Text className="text-red-700 " onPress={()=>routes.push('/landing-page')}style={styles.overlay}>
+      <Text className=" font-dancingscript_bold text-7xl text-white mt-56 " onPress={()=>routes.push('/landing-page')}style={styles.overlay}>
         BINGE MOVIES
       </Text>
           </View>

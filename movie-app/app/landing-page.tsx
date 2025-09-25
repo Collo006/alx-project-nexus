@@ -214,7 +214,7 @@ useEffect(()=>{
     index: nextIndex,
     animated:true,
   });//uses Flatlist to scroll to the new Index, animated ensures it slides smoothly
-  },3000);
+  },5000);
   return ()=> clearInterval(interval); //cleans up the interval whenever the component unmounts and prevents multiple timers stacking up and breaking things
 },[currentIndex,info])//runs everytime currentIndex or info changes
   // %info.length makes sure when we reach the last movie, it loops back to 0
@@ -329,10 +329,19 @@ const handleSearch=(text:string)=>{
             }
             <View className=" mt-2 ml-2 flex-row justify-between">
               <Ionicons name="information-circle" size={20} style={{ color: colors.secondaryText }}/>
-              <TouchableOpacity className="rounded-lg " style={{width:150,height:50,}}>
+
+              {info [currentIndex] &&(
+              <Link href={{pathname:"/details/[id]", params:{id:info[currentIndex]?.id,type:info[currentIndex]?.media_type ||(info[currentIndex].title ? "movie" : "tv")}}} asChild>
+                <TouchableOpacity className="rounded-lg " style={{width:150,height:50,}}>
                 <Text className="text-center pt-4 font-sora_semi_bold rounded-lg " style={{backgroundColor:colors.secondaryText, color:colors.primaryText,height:50}}>WATCH NOW</Text>
                 </TouchableOpacity>
-             <Ionicons name="bookmark" size={20} style={{color: colors.secondaryText}}/>
+              </Link>
+                )}
+                <Link href='/categories/saved' push asChild>
+                <TouchableOpacity>
+                <Ionicons name="bookmark" size={20} style={{color: colors.secondaryText}}/>
+                </TouchableOpacity>
+                </Link>
             </View>
                 {/** POPULAR MOVIES/TV SHOWS */}
              <View className=" mt-2 ml-2" style= {{height: 250}}>
@@ -468,9 +477,6 @@ const handleSearch=(text:string)=>{
           </Link>
           <Link href='/categories/saved' push asChild>
           <Ionicons name="bookmark" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
-          </Link>
-          <Link href='/Profile/user_profile' push asChild>
-          <Ionicons name="ellipsis-horizontal" size={20} className="-mt-10" style={{color: colors.secondaryText}}/>
           </Link>
           </View>    
         </SafeAreaView>
