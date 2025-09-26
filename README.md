@@ -5,6 +5,8 @@ Project Nexus is the capstone milestone of the ProDev Frontend Engineering progr
 This repository documents my major learnings, challenges, solutions, and best practices gained throughout the program.
 It also serves as a knowledge hub for collaboration between Backend and Frontend learners.
 
+In this project, I am building a movie application where by users can stream trending , recent and even old tv shows and movies. This project is really helpful cause I will get a chance to work with API's which will realy help me when it comes to understanding and also use them perfectly so that my application can be at it's full best.
+
 # Objectives
 * Consolidate key learnings from the ProDev Frontend Engineering program.
 * Document major frontend technologies, concepts, and solutions.
