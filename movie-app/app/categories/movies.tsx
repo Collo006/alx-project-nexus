@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import axios from 'axios';
-import { View,Text, TextInput, TouchableOpacity,Image, ActivityIndicator, FlatList,ScrollView  } from "react-native";
+import { View,Text, TextInput, TouchableOpacity,Image, ActivityIndicator, FlatList  } from "react-native";
 import { SafeAreaProvider,SafeAreaView } from "react-native-safe-area-context";
 import { Sora_400Regular, Sora_600SemiBold, Sora_700Bold} from "@expo-google-fonts/sora";
 import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from "@expo-google-fonts/poppins";
@@ -25,6 +25,7 @@ const options = {
 export default function Trending() {
 
 const[info,setInfo]=useState<any>([]); //fetch info from API
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const[pendingRequests,setPendingRequests]=useState(0)// counter state
 const[loading,setIsLoading]=useState(true); //loading state
 const[error,setError]=useState<string | null>(null); //error state
@@ -102,7 +103,7 @@ if(!fontsLoaded){
                       <View className=" pt-4 flex-row gap-6">
                       <TextInput placeholder="Search Movie" placeholderTextColor="#A2A2A2" value={search} onChangeText={handleSearch}/>
                      <Ionicons name="search" size={25}  style={{ color: colors.secondaryText }} />
-                     <Link href='/Profile/user_profile' push asChild>
+                     <Link href='/categories/saved' push asChild>
                      <Ionicons name="person" size={25}  style={{ color: colors.secondaryText }} />
                      </Link>
                       </View>

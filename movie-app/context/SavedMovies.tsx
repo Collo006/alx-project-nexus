@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface MovieItem{
     id:string;
@@ -20,16 +21,39 @@ const SavedMoviesContext = createContext<SavedMoviesType | undefined>(undefined)
 export const SavedMoviesProvider =({children}: {children:ReactNode})=>{
     const [watchlist,setWatchlist]= useState<MovieItem[]>([]);
 
-const addToWatchlist = (item:MovieItem)=>{
-    setWatchlist((prev)=>{
-        const exists = prev.find((movie)=>movie.id===item.id);
-        if(exists) return prev; //avoid duplicates
-        return [...prev, item] 
-    });
+//load from AsyncStorage when app starts
+useEffect(()=>{
+    const loadSavedlist= async () =>{
+        try{
+            const stored = await AsyncStorage.getItem("watchlist");
+            if(stored) setWatchlist(JSON.parse(stored));
+        }catch(e){
+            console.log("Failed to load watchlist:",e)
+        }
+    };
+    loadSavedlist();
+},[]);
+
+//save to asyncStorage whenever watchlist changes
+useEffect(()=>{
+    const saveWatchlist = async () => {
+        try{
+            await AsyncStorage.setItem("watchlist",JSON.stringify(watchlist));
+        }catch (e){
+            console.log("Failed to save watchlist:",e);
+        }
+    };
+    saveWatchlist();
+},[watchlist])
+
+const addToWatchlist = (movie:any)=>{
+    if(!watchlist.find((item)=>item.id === movie.id)){
+        setWatchlist([...watchlist,movie])
+    }
 };
 
 const removeFromWatchlist = (id:string)=>{
-    setWatchlist((prev)=>prev.filter((movie)=>movie.id !==id));
+    setWatchlist(watchlist.filter((item)=>item.id !== id));
 };
 
 return (
@@ -38,9 +62,11 @@ return (
     </SavedMoviesContext.Provider>
 );
 };
-export const useWatchlist=()=>{
-    const context = useContext(SavedMoviesContext);
-    if(!context) throw new Error("useWatchlist must be used inside SavedMoviesProvider");
-    return context;
-}
+export const useWatchlist = () => {
+  const context = useContext(SavedMoviesContext);
+  if (!context) {
+    throw new Error("useWatchlist must be used within a SavedMoviesProvider");
+  }
+  return context;
+};
 

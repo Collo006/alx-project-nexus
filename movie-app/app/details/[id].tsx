@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useLocalSearchParams,Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, View ,Text, Image, ScrollView, TouchableOpacity} from "react-native";
+import { ActivityIndicator, View ,Text, Image, ScrollView, TouchableOpacity, Linking} from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { Sora_400Regular, Sora_600SemiBold, Sora_700Bold} from "@expo-google-fonts/sora";
@@ -11,15 +12,100 @@ import { Ionicons } from "@expo/vector-icons";
 import { useWatchlist } from "@/context/SavedMovies";
 
 
-
+const options = {
+  method: 'GET',
+  url: 'https://api.themoviedb.org/3/tv/series_id/watch/providers',
+  headers: {
+    accept: 'application/json',
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OGI4Y2Y5M2JhODBjZGIzYjBkZDIyZjhhZTI4ZDZjNiIsIm5iZiI6MTc1ODA0ODMxOS41NjA5OTk5LCJzdWIiOiI2OGM5YjAzZjAxMDU1NjhlNmI3OGMyNGUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.aN82hedmtHMdd_1mAKxIAxD8s9Xg8claNVHAxQX0PVU'
+  }
+};
 
 
 export default function DetailsScreen() {
 
+  const { id, type } = useLocalSearchParams<{ id: string; type: string }>();
+
+  const [info, setInfo] = useState<any>([]);
+  const [pendingRequests, setPendingRequests] = useState(0);
+  const [isloading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [watchLink, setWatchLink] = useState<string | null>(null);
+
+  //set counter function
+  async function fetchWithCounter(fetchFN: () => Promise<void>) {
+    setPendingRequests((prev) => prev + 1);
+    try {
+      await fetchFN();
+    } finally {
+      setPendingRequests((prev) => {
+        const newCount = prev - 1;
+        if (newCount === 0) setIsLoading(false);
+        return newCount;
+      });
+    }
+  }
+
+
+  useEffect(() => {
+    if (!id || !type) return;
+
+    const fetchProviders = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/${type}/${id}/watch/providers`,
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OGI4Y2Y5M2JhODBjZGIzYjBkZDIyZjhhZTI4ZDZjNiIsIm5iZiI6MTc1ODA0ODMxOS41NjA5OTk5LCJzdWIiOiI2OGM5YjAzZjAxMDU1NjhlNmI3OGMyNGUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.aN82hedmtHMdd_1mAKxIAxD8s9Xg8claNVHAxQX0PVU',
+            },
+          }
+        );
+
+        const providers = response.data.results;
+        console.log("Providers:", providers);
+
+        if (providers.US && providers.US.link) {
+          setWatchLink(providers.US.link);
+        } else {
+          setWatchLink(null);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchProviders();
+  }, [id, type]);
+
+
+useEffect(()=>{
+  fetchWithCounter(async () => {
+  try {
+    const response = await axios.request(options);
+    const data = response.data.results;
+
+    console.log("Providers:", data);
+
+    // Example: get US link
+    if (data.US && data.US.link) {
+      setWatchLink(data.US.link);
+    }
+
+    setInfo(data);
+  } catch (error: any) {
+    console.log(error);
+    setError("Something just Crushed!! see you in a jiffy");
+  }
+});
+
+
+},[])
+
     //Saved Movies
     const { addToWatchlist } = useWatchlist();
 
-    const {id,type} = useLocalSearchParams<{id:string;type:string}>();
+
     const[details,setDetails] = useState<any>(null);
     const[loading,setLoading] = useState(true);
 
@@ -80,7 +166,7 @@ if(!fontsLoaded){
                                             <Text className="pt-4 font-sora_bold text-2xl  "  style={{ color: colors.secondaryText }}>BingeMovies</Text>
                                             </View>
                                           <View className=" pt-4 flex-row gap-6">
-                                         <Link href='/Profile/user_profile' push asChild>
+                                        <Link href='/categories/saved' push asChild>
                                          <Ionicons name="person" size={25}  style={{ color: colors.secondaryText }} />
                                          </Link>
                                           </View>
@@ -110,14 +196,13 @@ if(!fontsLoaded){
           })}>
         <Text  className= " font-poppins text-lg " style={{backgroundColor:colors.secondaryText, color:colors.primaryText,textAlign:"center"}}>Save</Text>
       </TouchableOpacity>
-         <TouchableOpacity style={{backgroundColor:colors.secondaryText,padding:10,marginVertical:10,borderRadius:10, width:195}} onPress={() =>
-          addToWatchlist({
-            id,
-            title: details.title,
-            name: details.name,
-            poster_path: details.poster_path,
-            overview: details.overview,
-          })}>
+         <TouchableOpacity style={{backgroundColor:colors.secondaryText,padding:10,marginVertical:10,borderRadius:10, width:195}}  onPress={() => {
+    if (watchLink) {
+      Linking.openURL(watchLink);
+    } else {
+      alert("No providers available in your region ");
+    }
+  }}>
         <Text className= " font-poppins text-lg " style={{backgroundColor:colors.secondaryText, color:colors.primaryText,textAlign:"center"}}>Watch</Text>
       </TouchableOpacity>
 

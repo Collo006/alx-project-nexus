@@ -45,7 +45,7 @@ if(!fontsLoaded){
           isMuted
           />
           <View className="self-center mt-40">
-      <Text className=" font-dancingscript_bold text-7xl text-white mt-56 " onPress={()=>routes.push('/landing-page')}style={styles.overlay}>
+      <Text className=" font-dancingscript_bold text-7xl  mt-56 " onPress={()=>routes.push('/landing-page')}style={styles.overlay}>
         BINGE MOVIES
       </Text>
           </View>
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent:"center",
     alignItems:"center",
+    color:"white"
 
   },
   backgroundVideo:{

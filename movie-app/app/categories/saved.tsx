@@ -42,7 +42,7 @@ if(!fontsLoaded){
                                             <Text className="pt-4 font-sora_bold text-2xl  "  style={{ color: colors.secondaryText }}>BingeMovies</Text>
                                             </View>
                                           <View className=" pt-4 flex-row gap-6">
-                                         <Link href='/Profile/user_profile' push asChild>
+                                       <Link href='/categories/saved' push asChild>
                                          <Ionicons name="person" size={25}  style={{ color: colors.secondaryText }} />
                                          </Link>
                                           </View>
@@ -61,7 +61,7 @@ if(!fontsLoaded){
         <ScrollView style={{flex:1, padding:16}}>
             <View>
 
-            { watchlist.map((movie)=>(
+            { watchlist.map((movie:any)=>(
                 <View key={movie.id} style={{marginBottom:20}}>
                 <Link href={{pathname: "/details/[id]",params: { id: movie.id, type: movie.title ? "movie" : "tv" }}} asChild >
                 <TouchableOpacity>

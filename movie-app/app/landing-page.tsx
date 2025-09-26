@@ -267,7 +267,7 @@ const handleSearch=(text:string)=>{
               <View className=" pt-4 flex-row gap-6">
               <TextInput placeholder="Search Movie" placeholderTextColor="#A2A2A2" value={search} onChangeText={handleSearch}/>
              <Ionicons name="search" size={25}  style={{ color: colors.secondaryText }} />
-             <Link href='/Profile/user_profile' push asChild>
+            <Link href='/categories/saved' push asChild>
              <Ionicons name="person" size={25}  style={{ color: colors.secondaryText }} />
              </Link>
               </View>
