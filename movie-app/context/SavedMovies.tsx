@@ -1,20 +1,8 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MovieItem } from "@/interfaces";
+import { SavedMoviesType } from "@/constants/saved";
 
-export interface MovieItem{
-    id:string;
-    title?:string;
-    name?:string;
-    poster_path?:string;
-    overview?:string;
-} ///describes a movie/tv show in the watch list
-
-interface SavedMoviesType{
-    watchlist: MovieItem[];
-    addToWatchlist: (item:MovieItem)=> void;
-    removeFromWatchlist: (id:string)=> void;
-
-}  //defines what the context value looks like
 
 const SavedMoviesContext = createContext<SavedMoviesType | undefined>(undefined)   //create the context object
 

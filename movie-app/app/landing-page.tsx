@@ -327,8 +327,7 @@ const handleSearch=(text:string)=>{
             />
 
             }
-            <View className=" mt-2 ml-2 flex-row justify-between">
-              <Ionicons name="information-circle" size={20} style={{ color: colors.secondaryText }}/>
+            <View className=" mt-2 ml-2 flex self-center">
 
               {info [currentIndex] &&(
               <Link href={{pathname:"/details/[id]", params:{id:info[currentIndex]?.id,type:info[currentIndex]?.media_type ||(info[currentIndex].title ? "movie" : "tv")}}} asChild>
@@ -337,11 +336,6 @@ const handleSearch=(text:string)=>{
                 </TouchableOpacity>
               </Link>
                 )}
-                <Link href='/categories/saved' push asChild>
-                <TouchableOpacity>
-                <Ionicons name="bookmark" size={20} style={{color: colors.secondaryText}}/>
-                </TouchableOpacity>
-                </Link>
             </View>
                 {/** POPULAR MOVIES/TV SHOWS */}
              <View className=" mt-2 ml-2" style= {{height: 250}}>

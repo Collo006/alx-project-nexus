@@ -26,7 +26,10 @@ if(!fontsLoaded){
 }
 
     if (watchlist.length===0){
-        return <Text className=" font-sora text-2xl self-center " style={{ color: colors.secondaryText, marginTop:86 }}>Your watch List is empty</Text>
+
+        return <View style={{flex:1, backgroundColor:colors.backGround}} >
+          <Text className=" font-sora text-2xl self-center " style={{ color: colors.secondaryText, marginTop:86 }}>Your watch List is empty</Text>
+          </View>
     }
 
     return(
