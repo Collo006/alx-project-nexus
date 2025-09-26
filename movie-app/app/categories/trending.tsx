@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import axios from 'axios';
-import { View,Text, TextInput, TouchableOpacity,Image, ActivityIndicator, FlatList,ScrollView  } from "react-native";
+import { View,Text, TextInput, TouchableOpacity,Image, ActivityIndicator, FlatList  } from "react-native";
 import { SafeAreaProvider,SafeAreaView } from "react-native-safe-area-context";
 import { Sora_400Regular, Sora_600SemiBold, Sora_700Bold} from "@expo-google-fonts/sora";
 import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from "@expo-google-fonts/poppins";
@@ -25,6 +25,7 @@ const options = {
 export default function Trending() {
 
 const[info,setInfo]=useState<any>([]); //fetch info from API
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const[pendingRequests,setPendingRequests]=useState(0)// counter state
 const[loading,setIsLoading]=useState(true); //loading state
 const[error,setError]=useState<string | null>(null); //error state
@@ -56,9 +57,9 @@ fetchWithCounter(async()=>{
     const data= response.data.results;
     console.log(data);
     setInfo(data);
-    setIsLoading(false);
+
   }catch(error:any){
-    setIsLoading(false);
+
     console.log(error);
     setError("Something just Crushed!! see you in a jiffy!")
   }

@@ -69,18 +69,21 @@ const[info,setInfo]=useState<any>([]); //fetch info from API
 const[pop,setPopular]=useState<any>([]);// fetch popular API
 const[latest,setLatest]=useState<any>([]);// fetch latest movies
 const[rate,setRated]=useState<any>([]);// fetch rated movies
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const[pendingRequests,setPendingRequests]=useState(0)// counter state
 const[loading,setIsLoading]=useState(true); //loading state
 const[error,setError]=useState<string | null>(null); //error state
 const[errorPopular,setErrorPopular]=useState<string|null>(null);//popular error state
 const[errorNowPlaying,setErrorNowPlaying]=useState<string|null>(null)//now playing
 const[errorRated,setErrorRated]=useState<string|null>(null)// rated
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const[errormultisearch,setErrorMultiSearch]=useState<string|null>(null)// rated
 
 const combinedData = [...pop,...latest,...rate];
 
 //Search Bar
 const[search,setSearch]=useState("")//search query
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const[multisearch,setMultiSearch]=useState<any>([])// fetch from multi_search
 const[filterData,setFilteredData]=useState<any>([])// filter data across all field
 
@@ -217,7 +220,7 @@ useEffect(()=>{
   },5000);
   return ()=> clearInterval(interval); //cleans up the interval whenever the component unmounts and prevents multiple timers stacking up and breaking things
 },[currentIndex,info])//runs everytime currentIndex or info changes
-  // %info.length makes sure when we reach the last movie, it loops back to 0
+  // info.length makes sure when we reach the last movie, it loops back to 0
 
   //Dark theme and Light Theme Toggle
   const {theme,colors,toggleTheme}=useTheme();
